@@ -34,6 +34,10 @@ from Quartz import (
     kCGWindowListOptionOnScreenOnly,
     kCGNullWindowID
 )
+
+from Foundation import *
+from ScriptingBridge import *
+
 from PyObjCTools import AppHelper
 import config as cfg
 
@@ -109,12 +113,22 @@ class Sniffer:
                             or (not event.windowNumber()
                                 and window['kCGWindowOwnerName'] == app.localizedName())):
                             geometry = window['kCGWindowBounds']
-                            self.screen_hook(window['kCGWindowOwnerName'],
-                                             window.get('kCGWindowName', u''),
-                                             geometry['X'],
-                                             geometry['Y'],
-                                             geometry['Width'],
-                                             geometry['Height'])
+                            if app.localizedName() == "Google Chrome":
+                                chrome = SBApplication.applicationWithBundleIdentifier_("com.google.Chrome")
+                                self.screen_hook(window['kCGWindowOwnerName'],
+                                                 chrome.windows()[0].activeTab().title(),
+                                                 geometry['X'],
+                                                 geometry['Y'],
+                                                 geometry['Width'],
+                                                 geometry['Height'])
+                            else:
+                                self.screen_hook(window['kCGWindowOwnerName'],
+                                                 window.get('kCGWindowName', u''),
+                                                 geometry['X'],
+                                                 geometry['Y'],
+                                                 geometry['Width'],
+                                                 geometry['Height'])
+
                             break
                     break
 
